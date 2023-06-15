@@ -12,14 +12,17 @@ window.onload = async function() {
         let items = await searchBooks(s.value);
    
         // html に変換して表示用 DOM に代入
-        let texts = items.map(item => {
+        let texts = items.map((item,index) => {
+            // リストごとに異なるidを生成
+            let listId = `bl${index + 1}`;
+
             return `
-                <div>
-                    <a class='f border bg-white mb8' href='${item.link}', target='_blank'>
+                <div id = '${listId}'>
                     <img class='w100 object-fit-contain bg-gray' src='${item.image}' />
                     <div class='p16'>
                         <h3 class='mb8'>${item.title}</h3>
                         <p class='line-clamp-2'>${item.description}</p>
+                        <button class='favButton' data-title='${item.title}' data-description='${item.description}' data-link='${item.link}' data-image='${item.image}'>Add to favorites</button>
                     </div>
                 </div>`;
             });
@@ -46,12 +49,3 @@ window.onload = async function() {
         return items;
     };
 };
-
-
-
-
-// let send = document.getElementById('send');
-// $(send).on('click' function{
-//     $q.value = '鬼滅';
-//     search();
-// });
