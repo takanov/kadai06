@@ -9,14 +9,7 @@
 </head>
 <body>
   <div>
-    <div>
-        名前：<input type="text" id="uname">
-    </div>
-    <div>
-        <textarea id="text" cols="30" rows="10"></textarea>
-        <button id="send">送信</button>
-    </div>
-    <div id="favarites" style="overflow: auto;height: 300px;"></div>
+    <div id="favarites" style="overflow: auto;height: 600px;"></div>
   </div>
 
   
@@ -31,22 +24,22 @@
 
 
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-  <script src="js/main.js"></script>
-  <script type="module">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="js/main.js"></script>
+<script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } 
-      from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved }
+        from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved, onChildChanged, get}
         from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
-  
+
     // Your web app's Firebase configuration
     const firebaseConfig = {
 
     };
-  
+
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app); //RealtimeDBに接続
@@ -54,70 +47,82 @@
 
 
     document.addEventListener('click', function(e) {
-    if (e.target.matches('.favButton')) {
-        let book = {
-            title: e.target.dataset.title,
-            description: e.target.dataset.description,
-            link: e.target.dataset.link,
-            image: e.target.dataset.image,
-        };
+        if (e.target.matches('.favButton')) {
+            let book = {
+                title: e.target.dataset.title,
+                description: e.target.dataset.description,
+                link: e.target.dataset.link,
+                image: e.target.dataset.image,
+                readCount: 0,
+            };
         
-        const favRef = ref(db, "favorites"); //RealtimeDB内の"favorites"を使う
-        const newPostRef = push(favRef); //ユニークKEYを生成
-        set(newPostRef, book); //"favorites"にユニークKEYをつけてオブジェクトデータを登録
-    }
-});
+            const favRef = ref(db, "favorites"); //RealtimeDB内の"favorites"を使う
+            const newPostRef = push(favRef); //ユニークKEYを生成
+            set(newPostRef, book); //"favorites"にユニークKEYをつけてオブジェクトデータを登録
+        }
+    });
 
-const favRef = ref(db, "favorites");
-onChildAdded(favRef, function (data) {
-    const book = data.val(); 
-    const key = data.key;
 
-    let h =`
-    <div>
-        <h3>${book.title}</h3>
-        <p>${book.description}</p>
-        <img src="${book.image}" />
-    </div>
-    `
-    $("#favarites").append(h); //#outputの最後に追加 
-});
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.removeFavButton')) {
+            const key = e.target.dataset.key;
+            
+            const bookRef = ref(db, `favorites/${key}`);
+            remove(bookRef);
+        }
+    });
 
-    // //データ登録(Click)
-    // $("#send").on("click", function () {
-    //     const msg = {
-    //         uname: $("#uname").val(),
-    //         text: $("#text").val()
-    //     }
-    //     const newPostRef = push(dbRef); //ユニークKEYを生成
-    //     set(newPostRef, msg);           //"chat"にユニークKEYをつけてオブジェクトデータを登録
-    // });
+    document.addEventListener('click', function(e) {
+        if(e.target.matches('.readButton')){
+            const key = e.target.dataset.key;
+            const bookRef = ref(db, `favorites/${key}`);
 
-    // //データ登録(Enter)
-    // $("#text").on("keydown", function (e) {
-    //     console.log(e);        //e変数の中身を確認！！
-    //     if (e.keyCode == 13) {   //EnterKey=13
-    //         const msg = {
-    //             uname: $("#uname").val(),
-    //             text: $("#text").val()
-    //         }
-    //         const newPostRef = push(dbRef); //ユニークKEYを生成
-    //         set(newPostRef, msg);           //"chat"にユニークKEYをつけてオブジェクトデータを登録
-    //     }
-    // });
+            get(bookRef)
+            .then((snapshot) => {
+                if(snapshot.exists()) {
+                    let book = snapshot.val();
+                    book.readCount += 1;
+                    set(bookRef, book);
+                }
+            });
+        }
+    });
 
-    // //最初にデータ取得＆onSnapshotでリアルタイムにデータを取得
-    // onChildAdded(dbRef, function (data) {
-    //     const msg = data.val();    //オブジェクトデータを取得し、変数msgに代入
-    //     const key = data.key;      //データのユニークキー（削除や更新に使用可能）
-    //     //表示用テキスト・HTMLを作成
-    //     let h = '<p>';
-    //     h += msg.uname;
-    //     h += '<br>';
-    //     h += msg.text;
-    //     h += '</p>';
-    //     $("#output").append(h); //#outputの最後に追加
-    // });
-  </script> 
+    const favRef = ref(db, "favorites");
+    onChildAdded(favRef, function (data) {
+        const book = data.val(); 
+        const key = data.key;
+
+        let h =`
+            <div id = '${key}'>
+                <h3>${book.title}</h3>
+                <p>${book.description}</p>
+                <img src="${book.image}" />
+                <button class="removeFavButton" data-key="${key}">Remove from favorites</button>
+                <p class="readCount">Read count: ${book.readCount}</p>
+                <button class="readButton" data-key="${key}">読んだよ</button>
+            </div>
+        `
+        $("#favarites").append(h); //#favaritesの最後に追加 
+    });
+
+    onChildRemoved(favRef, function(data){
+        const key = data.key;
+        //DOM から該当する要素を削除
+        const element = document.getElementById(key);
+        if(element) {
+            element.remove();
+        }
+    });
+
+    onChildChanged(favRef, function(data) {
+        const book = data.val();
+        const key = data.key;
+        const element = document.getElementById(key);
+        if (element) {
+            element.querySelector('.readCount').textContent = `Read count: ${book.readCount}`;
+        }
+    });
+</script> 
 </body>
 </html>
