@@ -54,6 +54,7 @@
                 link: e.target.dataset.link,
                 image: e.target.dataset.image,
                 readCount: 0,
+                memo: '', // 初期のメモは空に設定
             };
         
             const favRef = ref(db, "favorites"); //RealtimeDB内の"favorites"を使う
@@ -77,12 +78,30 @@
             const key = e.target.dataset.key;
             const bookRef = ref(db, `favorites/${key}`);
 
+            // 現在のブックデータを取得する
             get(bookRef)
             .then((snapshot) => {
                 if(snapshot.exists()) {
                     let book = snapshot.val();
                     book.readCount += 1;
                     set(bookRef, book);
+
+                }
+            });
+        }
+    });
+
+    document.addEventListener('click', function(e){
+        if(e.target.matches('.saveMemoButton')){
+            const key = e.target.dataset.key;
+            const bookRef = ref(db, `favorites/${key}`);
+            const memoText = document.querySelector('.memoArea[data-key="' + key + '"]').value;
+
+            get(bookRef).then((snapshot) => {
+                if(snapshot.exists()) {
+                    let book = snapshot.val();
+                    // メモ欄の更新
+                    set(bookRef, { ...book, memo: memoText });
                 }
             });
         }
@@ -101,9 +120,24 @@
                 <button class="removeFavButton" data-key="${key}">Remove from favorites</button>
                 <p class="readCount">Read count: ${book.readCount}</p>
                 <button class="readButton" data-key="${key}">読んだよ</button>
+                <textarea class="memoArea" data-key="${key}">${book.memo}</textarea>
+                <button class="saveMemoButton" data-key="${key}">Save memo</button>
             </div>
         `
         $("#favarites").append(h); //#favaritesの最後に追加 
+    });
+
+
+    
+
+    onChildAdded(favRef, function(data){
+        const book = data.val();
+        const key = data.key;
+        const element = document.getElementById(key);
+        if(element){
+            element.querySelector('.readCount').textContent = `Read count: ${book.readCount}`;
+            element.querySelector('.memoArea').value = book.memo;
+        } 
     });
 
     onChildRemoved(favRef, function(data){
