@@ -17,12 +17,14 @@ window.onload = async function() {
             let listId = `bl${index + 1}`;
 
             return `
-                <div id = '${listId}'>
-                    <img class='w100 object-fit-contain bg-gray' src='${item.image}' />
+                <div id = '${listId}' class='searchContents'>
+                    <div class = "img-wrapper">
+                        <img class='bg-gray' src='${item.image}' />
+                    </div> 
                     <div class='p16'>
                         <h3 class='mb8'>${item.title}</h3>
                         <p class='line-clamp-2'>${item.description}</p>
-                        <button class='favButton' data-title='${item.title}' data-description='${item.description}' data-link='${item.link}' data-image='${item.image}'>Add to favorites</button>
+                        <button class='favButton' data-title='${item.title}' data-description='${item.description}' data-link='${item.link}' data-image='${item.image}'>本棚に追加</button>
                     </div>
                 </div>`;
             });

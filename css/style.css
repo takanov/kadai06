@@ -1,0 +1,169 @@
+img {
+    width: 100%;
+}
+
+.main {
+    width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.bookcontent {
+    display: flex;
+    margin-bottom: 24px;
+    background-color: #efefef;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+
+.left {
+    width: 200px;
+    margin-right: 24px;
+    position: relative;
+}
+.right {
+    width: 200px;
+}
+
+.bookinfo {
+    padding: 8px;
+}
+
+.booktitle {
+    margin: 0;
+    margin-bottom: 8px;
+}
+
+.memoArea {
+    margin-bottom: 8px;
+}
+
+.booksd {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.25;
+}
+
+.removeFavButton {
+    position: absolute;
+    z-index: 999;
+    top: 8px;
+    right: 8px;
+}
+
+#favarites {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.kidoku {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.readButton {
+    background-color:#1800ff;
+    color: #fff;
+    height: 24px;
+    border-radius: 64px;
+    padding: 4px 12px;
+    border: none;
+}
+
+.memoResults {
+    height: 170px;
+    overflow: scroll;
+    background-color: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+
+.content-left {
+    width: 980px;
+}
+.content-right {
+    width: 420px;
+    border-left: 1px solid #eee;
+    padding: 24px;
+    height: 100vh;
+    overflow: scroll;
+    box-sizing: border-box;
+    background-color: #f3f7f7;
+}
+
+.textInput {
+    display: flex;
+    flex-direction: column;
+    background-color: #fffff9;
+    padding: 12px;
+    border-radius: 8px;
+}
+.saveMemoButton {
+    height: 24px;
+    background-color: #ff000000;
+    border: 1px solid #1800ff;
+    border-radius: 64px;
+    color: #1800ff
+}
+
+.searchContents {
+    display: flex;
+    background-color: #fff;
+    padding: 16px;
+    box-sizing: border-box;
+    margin-bottom: 24px;
+    border-radius: 16px;
+}
+
+.bg-gray {
+    width: 120px;
+    margin-right: 12px;
+}
+
+.mb8 {
+    font-size: 16px;
+    line-height: 1.25;
+}
+
+.line-clamp-2 {
+    height: 100px;
+    overflow: hidden;
+}
+
+.favButton {
+    width: 100%;
+    height: 24px;
+    background-color: #ff000000;
+    border: 1px solid #1800ff;
+    border-radius: 64px;
+    color: #1800ff;
+}
+
+.search-wrapper {
+    display: flex;
+}
+
+.input {
+    width: 100%;
+    margin-right: 12px;
+    height: 40px;
+    border-radius: 64px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    border: 1px solid #c6c6c6;
+}
+
+#searchButton {
+    width: 160px;
+    height: 40px;
+    background-color: #1800ff;
+    border-radius: 64px;
+    color: #fff;
+    border: none;
+}
