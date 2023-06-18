@@ -3,7 +3,7 @@ window.onload = async function() {
     const r = document.getElementById('results');
     const searchButton = document.getElementById('searchButton');
 
-
+    
     // 検索ボタンのクリックイベントを監視し、クリックされた場合に search 関数を呼び出す
     searchButton.addEventListener('click', search);
 
@@ -50,4 +50,5 @@ window.onload = async function() {
         
         return items;
     };
+
 };

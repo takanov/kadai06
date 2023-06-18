@@ -15,11 +15,13 @@ img {
     background-color: #efefef;
     border-radius: 16px;
     padding: 24px;
+    position: relative;
 }
 
 
 .left {
     width: 200px;
+    height: 258px;
     margin-right: 24px;
     position: relative;
 }
@@ -44,6 +46,11 @@ img {
     margin: 0;
     font-size: 14px;
     line-height: 1.25;
+    height: 50px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
 }
 
 .removeFavButton {
@@ -86,12 +93,14 @@ img {
 
 .content-left {
     width: 980px;
+    height: 100vh;
+    overflow: scroll;
 }
 .content-right {
     width: 420px;
+    height: 100vh;
     border-left: 1px solid #eee;
     padding: 24px;
-    height: 100vh;
     overflow: scroll;
     box-sizing: border-box;
     background-color: #f3f7f7;
@@ -134,6 +143,7 @@ img {
 .line-clamp-2 {
     height: 100px;
     overflow: hidden;
+    font-size: 14px;
 }
 
 .favButton {
@@ -164,6 +174,14 @@ img {
     height: 40px;
     background-color: #1800ff;
     border-radius: 64px;
+    font-size: 16px;
     color: #fff;
     border: none;
+}
+
+.pokemonImage {
+    position: absolute;
+    width: 100px;
+    top: 200px;
+    right: 0;
 }

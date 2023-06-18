@@ -10,16 +10,19 @@
 <body>
     <div class="main">
         <div  class="content-left">
-            <h2 class="hondana">これから読む本棚</h2>
+            <h2 class="hondana">これから読む本</h2>
             <div id="favarites"></div>
         </div>
         <div  class="content-right">
-            <h2 class="title-tosho">図書検索</h2>
-            <div class = "search-wrapper">
-                <input class='input bg-white' type='search' id='search' />
-                <button id="searchButton">検索</button>
+            <div class="search-header">
+                <h2 class="title-tosho">図書検索</h2>
+                <div class = "search-wrapper">
+                    <input class='input bg-white' type='search' id='search' />
+                    <button id="searchButton">検索</button>
+                </div>
             </div>
-            <div>
+            
+            <div class="search-lists">
                 <h2 class='mb8'>検索結果</h2>
                 <div id='results'></div>
             </div>
@@ -47,8 +50,12 @@
     const dbRef = ref(db, "chat"); //RealtimeDB内の"chat"を使う
 
 
+    //クリックした時に、本の情報をFirebaseに登録する
     document.addEventListener('click', function(e) {
+
+        //クリックされた要素（e.target）が .favButtonクラスを持つ要素かどうかを確認
         if (e.target.matches('.favButton')) {
+            //　オブジェクト
             let book = {
                 title: e.target.dataset.title,
                 description: e.target.dataset.description,
@@ -56,6 +63,12 @@
                 image: e.target.dataset.image,
                 readCount: 0,
                 memo: '', // 初期のメモは空に設定
+                //ポケモンのデータを追加
+                // pokemon: {
+                //     name: pokemonData.name,
+                //     image: pokemonData.sprites.front_default,
+                //     type: pokemonData.types.map(type => type.type.name).join(', ')
+                // }
             };
         
             const favRef = ref(db, "favorites"); //RealtimeDB内の"favorites"を使う
@@ -66,20 +79,34 @@
 
 
     document.addEventListener('click', function(e) {
+
+        //クリックされた要素（e.target）が .removeFavButton クラスを持つ要素かどうかを確認
         if (e.target.matches('.removeFavButton')) {
+            //クリックされた要素の data-key 属性の値を取得
             const key = e.target.dataset.key;
             
+            //Firebaseのデータベースから削除するデータのリファレンス（参照）を取得
             const bookRef = ref(db, `favorites/${key}`);
+
+            //Firebaseのデータベースから削除
             remove(bookRef);
         }
     });
 
+
+     //クリックした時に、本の読んだ回数をカウントアップしてFirebaseに登録
     document.addEventListener('click', function(e) {
         if(e.target.matches('.readButton')){
+
+            //どの本の読了ボタンがクリックされたかを特定
             const key = e.target.dataset.key;
+
+            //Firebaseデータベースの 'favorites' ノードの中から、特定のキー（key）に一致するデータへのリファレンス（参照）を取得
             const bookRef = ref(db, `favorites/${key}`);
 
             // 現在のブックデータを取得する
+            //Firebaseのget()関数を使用してデータを非同期に取得。
+            //get()関数はPromiseを返すため、その結果（データベースから取得したデータ）は.then()メソッドを使ってハンドルする
             get(bookRef)
             .then((snapshot) => {
                 if(snapshot.exists()) {
@@ -87,6 +114,21 @@
                     book.readCount += 1;
                     set(bookRef, book);
 
+                    // ランダムにポケモンを取得
+                    getRandomPokemon().then(pokemon => {
+                        // ここで取得したポケモンを保存
+                        book.pokemon = {
+                            name: pokemon.name,
+                            image: pokemon.sprites['front_default'],
+                        };
+                        // bookオブジェクトをデータベースに書き込む
+                        set(bookRef, book);
+                        // ポケモンの画像を表示
+                        const element = document.getElementById(key);
+                        const pokemonImage = element.querySelector('.pokemonImage');
+                        pokemonImage.src = book.pokemon.image;
+                        pokemonImage.style.display = 'block'; // 画像を表示
+                    });
                 }
             });
         }
@@ -125,7 +167,12 @@
                 </div>
                 <div class = "right">
                     <div class = "kidoku">
-                        <p class="readCount">Read count: ${book.readCount}</p>
+                        ${
+                            book.pokemon 
+                            ? `<img class = "pokemonImage" src="${book.pokemon.image}"/>`
+                            : `<img class = "pokemonImage" style="display: none;"/>`
+                        }
+                        <p class="readCount">読んだ回数: ${book.readCount}</p>
                         <button class="readButton" data-key="${key}">読んだよ</button>
                     </div>
                     <div class = "memoContets">
@@ -149,7 +196,7 @@
         const key = data.key;
         const element = document.getElementById(key);
         if(element){
-            element.querySelector('.readCount').textContent = `Read count: ${book.readCount}`;
+            element.querySelector('.readCount').textContent = `読んだ回数: ${book.readCount}`;
             element.querySelector('.memoArea').value = book.memo;
         } 
     });
@@ -168,10 +215,18 @@
         const key = data.key;
         const element = document.getElementById(key);
         if (element) {
-            element.querySelector('.readCount').textContent = `Read count: ${book.readCount}`;
+            element.querySelector('.readCount').textContent = `読んだ回数: ${book.readCount}`;
             element.querySelector('.memoResults').textContent = book.memo;
+            // element.querySelector('.pokemonImage').src = book.pokemon.image;
         }
     });
+
+    //ポケモンAPIを取得してランダムでポケモンを呼び出す
+    function getRandomPokemon() {
+        const randomId = Math.floor(Math.random() * 898) + 1; // 1 to 898の間でランダムな数を取得
+        const url = `https://pokeapi.co/api/v2/pokemon/${randomId}`;
+        return fetch(url).then((res) => res.json());
+    }
 </script> 
 </body>
 </html>
